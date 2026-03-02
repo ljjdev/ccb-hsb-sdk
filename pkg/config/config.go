@@ -7,7 +7,10 @@ import (
 	"crypto/rsa"
 	"errors"
 	"os"
+	"strconv"
 	"time"
+
+	"github.com/ljjdev/ccb-hsb-sdk/internal/utils"
 )
 
 // Config 定义了 SDK 的配置项
@@ -129,25 +132,39 @@ func LoadConfigFromFile(filepath string) (*Config, error) {
 //   - CCB_MARKET_ID: 市场编号
 //   - CCB_MERCHANT_ID: 商家编号
 //   - CCB_GATEWAY_URL: 网关地址
-//   - CCB_PRIVATE_KEY_PATH: 私钥文件路径
-//   - CCB_PUBLIC_KEY_PATH: 公钥文件路径
+//   - CCB_PRIVATE_KEY: 私钥BASE64字符串
+//   - CCB_PUBLIC_KEY: 公钥BASE64字符串
 //   - CCB_TIMEOUT: 超时时间(秒)
 //   - CCB_DEBUG: 调试模式(true/false)
 func LoadConfigFromEnv() (*Config, error) {
+	// 1. 准备 RSA 密钥对
+	// 实际使用时,加载私钥的base64字符串
+	privateKey, err := utils.LoadPrivateKey(os.Getenv("CCB_PRIVATE_KEY"))
+	if err != nil {
+		return nil, err
+	}
+	// 实际使用时,加载公钥的base64字符串
+	publicKey, err := utils.LoadPublicKey(os.Getenv("CCB_PUBLIC_KEY"))
+	if err != nil {
+		return nil, err
+	}
+	timeout := 30
+	if os.Getenv("CCB_TIMEOUT") != "" {
+		timeout, err = strconv.Atoi(os.Getenv("CCB_TIMEOUT"))
+	}
 	cfg := &Config{
 		MarketID:   os.Getenv("CCB_MARKET_ID"),
 		MerchantID: os.Getenv("CCB_MERCHANT_ID"),
 		GatewayURL: os.Getenv("CCB_GATEWAY_URL"),
-		Timeout:    30 * time.Second,
+		Timeout:    time.Duration(timeout),
 		Debug:      os.Getenv("CCB_DEBUG") == "true",
+		PrivateKey: privateKey,
+		PublicKey:  publicKey,
 	}
 
 	if cfg.GatewayURL == "" {
 		cfg.GatewayURL = "https://marketpay.ccb.com/online/direct"
 	}
-
-	// TODO: 实现从文件加载密钥的逻辑
-
 	return cfg, cfg.Validate()
 }
 

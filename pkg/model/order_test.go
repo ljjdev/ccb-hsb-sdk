@@ -91,8 +91,8 @@ func TestCreateOrderRequest_ToMap(t *testing.T) {
 		PymdCd:         PaymentMethodPC,
 		PyOrdrTpcd:     OrderTypeNormal,
 		Ccy:            "156",
-		OrdrTamt:       "100.00",
-		TxnTamt:        "100.00",
+		OrdrTamt:       100.00,
+		TxnTamt:        100.00,
 	}
 
 	result, err := req.ToMap()
@@ -107,8 +107,8 @@ func TestCreateOrderRequest_ToMap(t *testing.T) {
 	assert.Equal(t, string(PaymentMethodPC), result["Pymd_Cd"])
 	assert.Equal(t, string(OrderTypeNormal), result["Py_Ordr_Tpcd"])
 	assert.Equal(t, "156", result["Ccy"])
-	assert.Equal(t, "100.00", result["Ordr_Tamt"])
-	assert.Equal(t, "100.00", result["Txn_Tamt"])
+	assert.Equal(t, "100", result["Ordr_Tamt"])
+	assert.Equal(t, "100", result["Txn_Tamt"])
 }
 
 func TestOrderStatus_String(t *testing.T) {

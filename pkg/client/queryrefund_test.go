@@ -23,6 +23,11 @@ func strPtr(s string) *string {
 	return &s
 }
 
+// float64Ptr 创建 float64 指针的辅助函数
+func float64Ptr(f float64) *float64 {
+	return &f
+}
+
 // setupTestClientForQueryRefund 创建测试客户端
 func setupTestClientForQueryRefund(t *testing.T, handler http.HandlerFunc) (*Client, *httptest.Server) {
 	// 生成测试密钥对
@@ -76,7 +81,7 @@ func TestQueryRefund_Success(t *testing.T) {
 			IttpartyJrnlNo: req.IttpartyJrnlNo,
 			CustRfndTrcno:  req.CustRfndTrcno,
 			RfndTrcno:      "RFND20240101120000123",
-			RfndAmt:        strPtr("100.00"),
+			RfndAmt:        float64Ptr(100.00),
 			RefundRspSt:    model.RefundStatusSuccess,
 		}
 
@@ -106,7 +111,7 @@ func TestQueryRefund_Success(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, "RFND20240101120000123", resp.RfndTrcno)
-	assert.Equal(t, "100.00", resp.RfndAmt)
+	assert.Equal(t, float64Ptr(100.00), resp.RfndAmt)
 	assert.Equal(t, model.RefundStatusSuccess, resp.RefundRspSt)
 	assert.True(t, resp.IsSuccess())
 }
@@ -128,7 +133,7 @@ func TestQueryRefund_WithRefundTraceNo(t *testing.T) {
 			IttpartyTms:    req.IttpartyTms,
 			IttpartyJrnlNo: req.IttpartyJrnlNo,
 			RfndTrcno:      req.RfndTrcno,
-			RfndAmt:        strPtr("50.00"),
+			RfndAmt:        float64Ptr(50.00),
 			RefundRspSt:    model.RefundStatusSuccess,
 		}
 
@@ -158,7 +163,7 @@ func TestQueryRefund_WithRefundTraceNo(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, "RFND20240101120000123", resp.RfndTrcno)
-	assert.Equal(t, "50.00", resp.RfndAmt)
+	assert.Equal(t, float64Ptr(50.00), resp.RfndAmt)
 	assert.True(t, resp.IsSuccess())
 }
 

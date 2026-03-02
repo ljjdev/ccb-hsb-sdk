@@ -123,10 +123,10 @@ type CreateOrderRequest struct {
 	PgfcRetUrlAdr string `json:"Pgfc_Ret_Url_Adr,omitempty"`
 
 	// OrdrTamt 订单总金额
-	OrdrTamt string `json:"Ordr_Tamt"`
+	OrdrTamt float64 `json:"Ordr_Tamt"`
 
 	// TxnTamt 交易总金额
-	TxnTamt string `json:"Txn_Tamt"`
+	TxnTamt float64 `json:"Txn_Tamt"`
 
 	// SubAppid 小程序的APPID
 	SubAppid string `json:"Sub_Appid,omitempty"`
@@ -153,7 +153,7 @@ type CreateOrderRequest struct {
 	PltNo string `json:"Plt_No,omitempty"`
 
 	// ApntCnsmpAmt 是否指定消费券核销金额
-	ApntCnsmpAmt string `json:"Apnt_Cnsmp_Amt,omitempty"`
+	ApntCnsmpAmt float64 `json:"Apnt_Cnsmp_Amt,omitempty"`
 
 	// CustomerIdr 消费者唯一标识
 	CustomerIdr string `json:"Customer_Idr,omitempty"`
@@ -177,13 +177,13 @@ type SubOrder struct {
 	CmdtyOrdrNo string `json:"Cmdty_Ordr_No"`
 
 	// OrdrAmt 订单金额
-	OrdrAmt string `json:"Ordr_Amt"`
+	OrdrAmt float64 `json:"Ordr_Amt"`
 
 	// Txnamt 交易金额
-	Txnamt string `json:"Txnamt"`
+	Txnamt float64 `json:"Txnamt"`
 
 	// ApdTamt 附加项总金额
-	ApdTamt string `json:"Apd_Tamt,omitempty"`
+	ApdTamt float64 `json:"Apd_Tamt,omitempty"`
 
 	// CmdtyDsc 商品描述
 	CmdtyDsc string `json:"Cmdty_Dsc,omitempty"`
@@ -210,7 +210,7 @@ type Participant struct {
 	MktMrchId string `json:"Mkt_Mrch_Id"`
 
 	// Amt 金额
-	Amt string `json:"Amt,omitempty"`
+	Amt float64 `json:"Amt,omitempty"`
 }
 
 // Coupon 消费券
@@ -300,10 +300,10 @@ type UsedCoupon struct {
 	CnsmpNoteOrdrId string `json:"Cnsmp_Note_Ordr_Id"`
 
 	// Amt 金额
-	Amt string `json:"Amt"`
+	Amt float64 `json:"Amt"`
 
 	// BalAmt 余额
-	BalAmt string `json:"Bal_Amt,omitempty"`
+	BalAmt float64 `json:"Bal_Amt,omitempty"`
 }
 
 // ToMap 将请求转换为 map,用于签名
@@ -434,7 +434,7 @@ type QueryRefundResponse struct {
 	RfndTrcno string `json:"Rfnd_Trcno"`
 
 	// RfndAmt 退款金额
-	RfndAmt *string `json:"Rfnd_Amt,omitempty"`
+	RfndAmt *float64 `json:"Rfnd_Amt,omitempty"`
 
 	// RefundRspSt 退款响应状态
 	RefundRspSt RefundStatus `json:"Refund_Rsp_St"`
@@ -631,7 +631,7 @@ type RefundOrderRequest struct {
 	RefundOrdrNo string `json:"Refund_Ordr_No"`
 
 	// RefundAmt 退款金额
-	RefundAmt string `json:"Refund_Amt"`
+	RefundAmt float64 `json:"Refund_Amt"`
 
 	// RefundRsn 退款原因
 	RefundRsn string `json:"Refund_Rsn,omitempty"`
@@ -661,7 +661,7 @@ type RefundOrderResponse struct {
 	RefundOrdrNo string `json:"Refund_Ordr_No"`
 
 	// RefundAmt 退款金额
-	RefundAmt string `json:"Refund_Amt"`
+	RefundAmt float64 `json:"Refund_Amt"`
 
 	// RefundTrnNo 退款流水号
 	RefundTrnNo string `json:"Refund_Trn_No,omitempty"`

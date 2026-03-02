@@ -97,8 +97,8 @@ func NewClient(cfg *config.Config) (*Client, error) {
 //		PymdCd:        model.PaymentMethodPC,
 //		PyOrdrTpcd:    model.OrderTypeNormal,
 //		Ccy:           "156",
-//		OrdrTamt:      "100.00",
-//		TxnTamt:       "100.00",
+//		OrdrTamt:      100.00,
+//		TxnTamt:       100.00,
 //	}
 //
 //	resp, err := client.CreateOrder(context.Background(), req)
@@ -181,7 +181,7 @@ func (c *Client) CreateOrder(ctx context.Context, req *model.CreateOrderRequest)
 //		MktId:        "12345678901234",
 //		MainOrdrNo:   "20240101120000123",
 //		RefundOrdrNo: "REFUND20240101120000123",
-//		RefundAmt:    "100.00",
+//		RefundAmt:    100.00,
 //		RefundRsn:    "用户申请退款",
 //	}
 //
@@ -352,15 +352,15 @@ func (c *Client) verifyRefundOrderResponseSignature(resp *model.RefundOrderRespo
 //		MainOrdrNo:     "20240101120000123",
 //		PymdCd:         model.PaymentMethodMobileH5,
 //		PyOrdrTpcd:     model.OrderTypeNormal,
-//		OrdrTamt:       "100.01",
-//		TxnTamt:        "100.01",
+//		OrdrTamt:       100.01,
+//		TxnTamt:        100.01,
 //		PayDsc:         "商品",
 //		OrderTimeOut:   "1800",
 //		Orderlist: []model.SubOrder{
 //			{
 //				CmdtyOrdrNo: "20240101120000123001",
-//				OrdrAmt:     "100.01",
-//				Txnamt:      "100.01",
+//				OrdrAmt:     100.01,
+//				Txnamt:      100.01,
 //				CmdtyDsc:    "商品",
 //				ClrgRuleId:  "123456",
 //				Parlist: []model.Participant{

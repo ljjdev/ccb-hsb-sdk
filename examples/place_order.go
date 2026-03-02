@@ -5,7 +5,6 @@ package examples
 
 import (
 	"context"
-	"crypto/rsa"
 	"fmt"
 	"log"
 
@@ -25,12 +24,10 @@ import (
 // 5. 处理响应和错误
 func PlaceOrderExample() {
 	// 1. 准备 RSA 密钥对
-	// 实际使用时,应该从文件加载密钥
-	// privateKey, err := utils.LoadPrivateKeyFromFile("path/to/private_key.pem")
-	// publicKey, err := utils.LoadPublicKeyFromFile("path/to/public_key.pem")
-	// 这里使用示例密钥(实际使用时替换为真实密钥)
-	var privateKey *rsa.PrivateKey
-	var publicKey *rsa.PublicKey
+	// 实际使用时,加载私钥的base64字符串
+	privateKey, err := utils.LoadPrivateKey("1111")
+	// 实际使用时,加载公钥的base64字符串
+	publicKey, err := utils.LoadPublicKey("11111")
 
 	// 2. 创建配置
 	// 使用配置选项模式初始化 SDK 配置
@@ -63,7 +60,7 @@ func PlaceOrderExample() {
 
 	// 5. 构建支付订单请求
 	// 支付金额: 100.01 元
-	amount := "100.01"
+	amount := 100.01
 
 	req := &model.CreateOrderRequest{
 		// 基础信息
@@ -115,144 +112,9 @@ func PlaceOrderExample() {
 	fmt.Println("创建支付订单成功!")
 	fmt.Printf("主订单编号: %s\n", mainOrderNo)
 	fmt.Printf("发起方流水号: %s\n", ittpartyJrnlNo)
-	fmt.Printf("支付金额: %s 元\n", amount)
+	fmt.Printf("支付金额: %.2f 元\n", amount)
 	fmt.Printf("支付URL: %s\n", payURL)
 
 	// 8. 将支付URL返回给前端,引导用户完成支付
 	// 实际业务中,应该将 payURL 返回给前端,前端跳转到该URL进行支付
-}
-
-// PlaceOrderWithMinimalParams 演示使用最少参数创建支付订单
-//
-// 本示例展示了如何使用最少参数创建订单,SDK 会自动填充默认值
-func PlaceOrderWithMinimalParams(cli *client.Client) error {
-	// 使用最少参数,其他参数会自动填充默认值
-	mainOrderNo := utils.GenerateSerialNumber("ORD")
-
-	req := &model.CreateOrderRequest{
-		MainOrdrNo: mainOrderNo,                 // 必填: 主订单编号
-		PymdCd:     model.PaymentMethodMobileH5, // 必填: 支付方式
-		PyOrdrTpcd: model.OrderTypeNormal,       // 必填: 订单类型
-		OrdrTamt:   "100.00",                    // 必填: 订单总金额
-		TxnTamt:    "100.00",                    // 必填: 交易总金额
-		Orderlist: []model.SubOrder{ // 必填: 子订单列表
-			{
-				CmdtyOrdrNo: mainOrderNo + "01", // 必填: 客户方子订单编号
-				OrdrAmt:     "100.00",           // 必填: 订单金额
-				Txnamt:      "100.00",           // 必填: 交易金额
-			},
-		},
-	}
-
-	payURL, err := cli.PlaceOrder(context.Background(), req)
-	if err != nil {
-		return fmt.Errorf("创建支付订单失败: %w", err)
-	}
-
-	fmt.Printf("支付URL: %s\n", payURL)
-	return nil
-}
-
-// PlaceOrderWithErrorHandling 演示完整的错误处理
-//
-// 本示例展示了如何处理各种可能的错误情况
-func PlaceOrderWithErrorHandling(cli *client.Client, amount string) (string, error) {
-	mainOrderNo := utils.GenerateSerialNumber("ORD")
-
-	req := &model.CreateOrderRequest{
-		MainOrdrNo: mainOrderNo,
-		PymdCd:     model.PaymentMethodMobileH5,
-		PyOrdrTpcd: model.OrderTypeNormal,
-		OrdrTamt:   amount,
-		TxnTamt:    amount,
-		Orderlist: []model.SubOrder{
-			{
-				CmdtyOrdrNo: mainOrderNo + "01",
-				OrdrAmt:     amount,
-				Txnamt:      amount,
-			},
-		},
-	}
-
-	// 调用 API
-	payURL, err := cli.PlaceOrder(context.Background(), req)
-	if err != nil {
-		// 处理错误
-		// 可能的错误类型:
-		// 1. 配置错误: 私钥/公钥无效
-		// 2. 网络错误: 连接超时、网络不可达
-		// 3. 签名错误: 签名生成失败
-		// 4. 验签错误: 响应签名验证失败
-		// 5. 业务错误: 订单创建失败
-		return "", fmt.Errorf("创建支付订单失败: %w", err)
-	}
-
-	// 检查支付URL是否有效
-	if payURL == "" {
-		return "", fmt.Errorf("支付URL为空")
-	}
-
-	return payURL, nil
-}
-
-// PlaceOrderWithPCPayment 演示创建 PC 端支付订单
-//
-// 本示例展示了如何创建 PC 端收银台支付订单
-func PlaceOrderWithPCPayment(cli *client.Client) error {
-	mainOrderNo := utils.GenerateSerialNumber("ORD")
-
-	req := &model.CreateOrderRequest{
-		MainOrdrNo: mainOrderNo,
-		PymdCd:     model.PaymentMethodPC, // 支付方式: 01-PC端收银台
-		PyOrdrTpcd: model.OrderTypeNormal,
-		OrdrTamt:   "100.00",
-		TxnTamt:    "100.00",
-		Orderlist: []model.SubOrder{
-			{
-				CmdtyOrdrNo: mainOrderNo + "01",
-				OrdrAmt:     "100.00",
-				Txnamt:      "100.00",
-			},
-		},
-	}
-
-	payURL, err := cli.PlaceOrder(context.Background(), req)
-	if err != nil {
-		return fmt.Errorf("创建PC端支付订单失败: %w", err)
-	}
-
-	fmt.Printf("PC端支付URL: %s\n", payURL)
-	return nil
-}
-
-// PlaceOrderWithWechatMini 演示创建微信小程序支付订单
-//
-// 本示例展示了如何创建微信小程序支付订单
-func PlaceOrderWithWechatMini(cli *client.Client) error {
-	mainOrderNo := utils.GenerateSerialNumber("ORD")
-
-	req := &model.CreateOrderRequest{
-		MainOrdrNo: mainOrderNo,
-		PymdCd:     model.PaymentMethodWechatMini, // 支付方式: 05-微信小程序
-		PyOrdrTpcd: model.OrderTypeNormal,
-		OrdrTamt:   "100.00",
-		TxnTamt:    "100.00",
-		SubAppid:   "wx1234567890abcdef", // 小程序的APPID
-		SubOpenid:  "o1234567890abcdef",  // 用户子标识
-		Orderlist: []model.SubOrder{
-			{
-				CmdtyOrdrNo: mainOrderNo + "01",
-				OrdrAmt:     "100.00",
-				Txnamt:      "100.00",
-			},
-		},
-	}
-
-	payURL, err := cli.PlaceOrder(context.Background(), req)
-	if err != nil {
-		return fmt.Errorf("创建微信小程序支付订单失败: %w", err)
-	}
-
-	fmt.Printf("微信小程序支付URL: %s\n", payURL)
-	return nil
 }
